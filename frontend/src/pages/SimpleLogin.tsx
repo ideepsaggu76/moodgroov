@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { getSpotifyAuthUrl } from '../utils/spotifyAuth';
 
-const SimpleLogin: React.FC = () => {
+interface SimpleLoginProps {
+  onLogin?: (user: any) => void;
+}
+
+const SimpleLogin: React.FC<SimpleLoginProps> = ({ onLogin }) => {
   const [showButton, setShowButton] = useState(false);
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
@@ -12,6 +17,11 @@ const SimpleLogin: React.FC = () => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  const handleSpotifyLogin = () => {
+    const authUrl = getSpotifyAuthUrl();
+    window.location.href = authUrl;
+  };
 
   return (
     <div style={{
@@ -239,10 +249,7 @@ const SimpleLogin: React.FC = () => {
                 (e.target as HTMLButtonElement).style.boxShadow = '0 8px 25px rgba(29, 185, 84, 0.3)';
                 (e.target as HTMLButtonElement).style.background = 'linear-gradient(135deg, #1DB954 0%, #1ed760 100%)';
               }}
-              onClick={() => {
-                console.log('Spotify login clicked');
-                // Handle Spotify OAuth here
-              }}
+              onClick={handleSpotifyLogin}
             >
               {/* Spotify Logo SVG */}
               <svg 

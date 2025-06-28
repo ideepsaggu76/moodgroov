@@ -10,6 +10,60 @@ export interface User {
     width: number;
   }>;
   country: string;
+  followers?: {
+    total: number;
+  };
+  product?: string; // premium, free, etc.
+}
+
+export interface SpotifyTokens {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  token_type: string;
+}
+
+export interface SpotifyTrack {
+  id: string;
+  name: string;
+  artists: Array<{
+    id: string;
+    name: string;
+  }>;
+  album: {
+    id: string;
+    name: string;
+    images: Array<{
+      url: string;
+      height: number;
+      width: number;
+    }>;
+  };
+  duration_ms: number;
+  popularity: number;
+  preview_url?: string;
+  external_urls: {
+    spotify: string;
+  };
+}
+
+export interface RecentlyPlayedItem {
+  track: SpotifyTrack;
+  played_at: string;
+  context?: {
+    type: string;
+    href: string;
+    external_urls: {
+      spotify: string;
+    };
+  };
+}
+
+export interface CurrentlyPlaying {
+  is_playing: boolean;
+  item: SpotifyTrack;
+  progress_ms: number;
+  timestamp: number;
 }
 
 export interface Track {
