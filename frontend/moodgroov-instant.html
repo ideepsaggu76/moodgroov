@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoodGroov - AI Music Experience</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', Arial, sans-serif;
+            overflow-x: hidden;
+            background: #000;
+        }
+
+        .container {
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.8) contrast(1.1);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00d4ff, #ff6b9d, #c77dff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo::before {
+            content: "🎵";
+            font-size: 2rem;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+        }
+
+        .title {
+            font-size: 4rem;
+            font-weight: 900;
+            margin: 0 0 20px 0;
+            background: linear-gradient(45deg, #f0f0f0, #00d4ff, #ff6b9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            margin: 0 0 30px 0;
+            line-height: 1.5;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .btn {
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding: 18px 50px;
+            background: linear-gradient(45deg, #1DB954, #1ed760);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 15px 30px rgba(29, 185, 84, 0.4);
+            transition: all 0.3s ease;
+            font-family: inherit;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn:hover {
+            transform: scale(1.05) translateY(-3px);
+            box-shadow: 0 20px 40px rgba(29, 185, 84, 0.6);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #00d4ff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px currentColor;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .particle:nth-child(2) { background: #ff6b9d; animation-delay: -1s; }
+        .particle:nth-child(3) { background: #c77dff; animation-delay: -2s; }
+        .particle:nth-child(4) { background: #06ffa5; animation-delay: -3s; }
+        .particle:nth-child(5) { background: #ffd23f; animation-delay: -4s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.3; }
+            50% { transform: translateY(-50px) translateX(20px); opacity: 1; }
+        }
+
+        .musical-notes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .note {
+            position: absolute;
+            font-size: 24px;
+            color: #00d4ff;
+            filter: drop-shadow(0 0 10px currentColor);
+            animation: noteFloat 4s ease-in-out infinite;
+        }
+
+        .note:nth-child(2) { color: #ff6b9d; animation-delay: -1s; }
+        .note:nth-child(3) { color: #c77dff; animation-delay: -2s; }
+
+        @keyframes noteFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
+            50% { transform: translateY(-40px) rotate(10deg); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Video Background -->
+        <video class="video-bg" autoplay loop muted playsinline>
+            <source src="videos/3196427-uhd_3840_2160_25fps.mp4" type="video/mp4">
+        </video>
+
+        <!-- Dark Overlay -->
+        <div class="overlay"></div>
+
+        <!-- Floating Particles -->
+        <div class="particles">
+            <div class="particle" style="left: 10%; top: 20%;"></div>
+            <div class="particle" style="left: 80%; top: 30%;"></div>
+            <div class="particle" style="left: 60%; top: 60%;"></div>
+            <div class="particle" style="left: 20%; top: 80%;"></div>
+            <div class="particle" style="left: 90%; top: 70%;"></div>
+        </div>
+
+        <!-- Musical Notes -->
+        <div class="musical-notes">
+            <div class="note" style="left: 15%; top: 25%;">♪</div>
+            <div class="note" style="left: 75%; top: 40%;">♫</div>
+            <div class="note" style="left: 45%; top: 70%;">♬</div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <div class="logo"></div>
+
+            <h1 class="title">MoodGroov</h1>
+
+            <p class="tagline">
+                Enter a realm where AI reads your soul and curates the perfect sonic landscape for your emotions
+            </p>
+
+            <button class="btn" onclick="enterMoodGroov()">
+                🎵 Enter the MoodGroov Universe
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function enterMoodGroov() {
+            alert('Welcome to MoodGroov! 🎵✨\n\nYour AI-powered music journey is about to begin...');
+        }
+
+        // Add some interactive particle movement
+        document.addEventListener('mousemove', (e) => {
+            const particles = document.querySelectorAll('.particle');
+            particles.forEach((particle, index) => {
+                const speed = (index + 1) * 0.01;
+                const x = e.clientX * speed;
+                const y = e.clientY * speed;
+                particle.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
+
