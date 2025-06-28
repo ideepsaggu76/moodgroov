@@ -75,3 +75,10 @@ temp/
 
 # React specific
 .cache/
+
+# Heroku
+.env.production
+
+# Package lock files (optional, comment out if you want to commit them)
+# package-lock.json
+# yarn.lock
